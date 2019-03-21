@@ -6,7 +6,7 @@ Date created: 07/2017
 Last modified: 10/16/2017
 Python Version: 3.5+
 """
-
+from scipy import signal
 import numpy as np
 
 
@@ -27,15 +27,22 @@ def conv_nested(image, kernel):
     Hi, Wi = image.shape
     Hk, Wk = kernel.shape
     out = np.zeros((Hi, Wi))
-
+    
     ### YOUR CODE HERE
-    for i in range(Hi):
-        for j in range(Wi):
-            for k in range(Hk):
-                for l in range(Wk):
-                    
     
+    kernel=np.flip(kernel,axis=0)
+    kernel=np.flip(kernel,axis=1)   
     
+    temp=np.zeros((Hi+Hk-1,Wi+Wk-1))
+    
+    height=int((Hk-1)/2)
+    width=int((Wk-1)/2)
+    
+    temp[height:Hi+1,width:Wi+1]=image
+    
+    for row in range(Hi):
+        for col in range(Wi):            
+            out[row,col]=np.sum(kernel*temp[row:row+Hk,col:col+Wk])
     ### END YOUR CODE
 
     return out
@@ -62,7 +69,11 @@ def zero_pad(image, pad_height, pad_width):
     out = None
 
     ### YOUR CODE HERE
-    pass
+    
+    out=np.zeros((H+pad_height*2,W+pad_width*2))
+    
+    out[pad_height:pad_height+H,pad_width:pad_width+W]=image
+    
     ### END YOUR CODE
     return out
 
@@ -91,7 +102,20 @@ def conv_fast(image, kernel):
     out = np.zeros((Hi, Wi))
 
     ### YOUR CODE HERE
-    pass
+    
+    kernel=np.flip(kernel,axis=0)
+    kernel=np.flip(kernel,axis=1)   
+    
+    temp=np.zeros((Hi+Hk-1,Wi+Wk-1))
+    
+    height=int((Hk-1)/2)
+    width=int((Wk-1)/2)
+    
+    temp[height:Hi+1,width:Wi+1]=image
+    
+    for row in range(Hi):
+        for col in range(Wi):            
+            out[row,col]=np.sum(kernel*temp[row:row+Hk,col:col+Wk])
     ### END YOUR CODE
 
     return out
@@ -110,7 +134,7 @@ def conv_faster(image, kernel):
     out = np.zeros((Hi, Wi))
 
     ### YOUR CODE HERE
-    pass
+    out=signal.convolve2d(image,kernel,boundary='fill', mode='same')
     ### END YOUR CODE
 
     return out
@@ -130,7 +154,7 @@ def cross_correlation(f, g):
 
     out = None
     ### YOUR CODE HERE
-    pass
+
     ### END YOUR CODE
 
     return out
